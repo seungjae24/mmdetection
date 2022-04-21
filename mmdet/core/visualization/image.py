@@ -263,6 +263,7 @@ def imshow_det_bboxes(img,
         'segms and bboxes should not be None at the same time.'
 
     img = mmcv.imread(img).astype(np.uint8)
+    raw_image = img
 
     if score_thr > 0:
         assert bboxes is not None and bboxes.shape[1] == 5
@@ -283,7 +284,8 @@ def imshow_det_bboxes(img,
     dpi = fig.get_dpi()
     # add a small EPS to avoid precision lost due to matplotlib's truncation
     # (https://github.com/matplotlib/matplotlib/issues/15363)
-    fig.set_size_inches((width + EPS) / dpi, (height + EPS) / dpi)
+    # fig.set_size_inches((width + EPS) / dpi, (height + EPS) / dpi)
+    fig.set_size_inches((width + 0) / dpi, (height + 0) / dpi)
 
     # remove white edges by set subplot margin
     plt.subplots_adjust(left=0, right=1, bottom=0, top=1)
@@ -316,12 +318,15 @@ def imshow_det_bboxes(img,
             font_size=font_size,
             scales=scales,
             horizontal_alignment=horizontal_alignment)
-
+    
     if segms is not None:
         mask_palette = get_palette(mask_color, max_label + 1)
         colors = [mask_palette[label] for label in labels]
+        # colors = [ (255,255,255) for label in labels]
         colors = np.array(colors, dtype=np.uint8)
-        draw_masks(ax, img, segms, colors, with_edge=True)
+        draw_masks(ax, img, segms, colors, with_edge=False)
+        #white_img = np.zeros(img.shape)
+        #draw_masks(ax, white_img, segms, colors, with_edge=False)
 
         if num_bboxes < segms.shape[0]:
             segms = segms[num_bboxes:]

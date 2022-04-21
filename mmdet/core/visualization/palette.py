@@ -45,8 +45,8 @@ def get_palette(palette, num_classes):
     elif palette == 'coco':
         from mmdet.datasets import CocoDataset, CocoPanopticDataset
         dataset_palette = CocoDataset.PALETTE
-        if len(dataset_palette) < num_classes:
-            dataset_palette = CocoPanopticDataset.PALETTE
+        # if len(dataset_palette) < num_classes:
+        #     dataset_palette = CocoPanopticDataset.PALETTE
     elif palette == 'citys':
         from mmdet.datasets import CityscapesDataset
         dataset_palette = CityscapesDataset.PALETTE
