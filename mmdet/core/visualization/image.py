@@ -161,7 +161,7 @@ def draw_labels(ax,
     return ax
 
 
-def draw_masks(ax, img, masks, color=None, with_edge=True, alpha=0.8):
+def draw_masks(ax, img, masks, color=None, with_edge=True, labels=None, alpha=1):
     """Draw masks on the image and their edges on the axes.
 
     Args:
@@ -189,12 +189,20 @@ def draw_masks(ax, img, masks, color=None, with_edge=True, alpha=0.8):
             polygons += [Polygon(c) for c in contours]
 
         color_mask = color[i]
-        while tuple(color_mask) in taken_colors:
-            color_mask = _get_bias_color(color_mask)
+        # while tuple(color_mask) in taken_colors:
+        #     color_mask = _get_bias_color(color_mask)
         taken_colors.add(tuple(color_mask))
-
-        mask = mask.astype(bool)
-        img[mask] = img[mask] * (1 - alpha) + color_mask * alpha
+        
+        mask = mask.astype(bool)    
+        if labels is not None:
+            dyn_objs = [0, 1, 2, 3, 5]
+            if labels[i] in dyn_objs:
+                print(labels[i])
+                img[mask] = img[mask] * (1 - alpha) + color_mask * alpha
+            else:
+                img[mask] = img[mask]
+        else:
+            img[mask] = img[mask] * (1 - alpha) + color_mask * alpha
 
     p = PatchCollection(
         polygons, facecolor='none', edgecolors='w', linewidths=1, alpha=0.8)
@@ -320,13 +328,16 @@ def imshow_det_bboxes(img,
             horizontal_alignment=horizontal_alignment)
     
     if segms is not None:
-        mask_palette = get_palette(mask_color, max_label + 1)
-        colors = [mask_palette[label] for label in labels]
-        # colors = [ (255,255,255) for label in labels]
+        # mask_palette = get_palette(mask_color, max_label + 1)
+        # colors = [mask_palette[label] for label in labels]
+        print(labels)
+        # print(segms)
+        colors = [ (255,255,255) for label in labels]
         colors = np.array(colors, dtype=np.uint8)
-        draw_masks(ax, img, segms, colors, with_edge=False)
-        #white_img = np.zeros(img.shape)
-        #draw_masks(ax, white_img, segms, colors, with_edge=False)
+        # draw_masks(ax, img, segms, colors, with_edge=False)
+        white_img = img
+        # white_img = np.zeros(img.shape)
+        draw_masks(ax, white_img, segms, colors, with_edge=False, labels=labels)
 
         if num_bboxes < segms.shape[0]:
             segms = segms[num_bboxes:]
@@ -351,14 +362,16 @@ def imshow_det_bboxes(img,
                 scales=scales,
                 horizontal_alignment=horizontal_alignment)
 
-    plt.imshow(img)
+    plt.imshow(white_img)
 
     stream, _ = canvas.print_to_buffer()
     buffer = np.frombuffer(stream, dtype='uint8')
     img_rgba = buffer.reshape(height, width, 4)
     rgb, alpha = np.split(img_rgba, [3], axis=2)
-    img = rgb.astype('uint8')
-    img = mmcv.rgb2bgr(img)
+    # img = rgb.astype('uint8')
+    # img = mmcv.rgb2bgr(img)
+    white_img = rgb.astype('uint8')
+    white_img = mmcv.rgb2bgr(white_img)
 
     if show:
         # We do not use cv2 for display because in some cases, opencv will
@@ -371,11 +384,12 @@ def imshow_det_bboxes(img,
             plt.show(block=False)
             plt.pause(wait_time)
     if out_file is not None:
-        mmcv.imwrite(img, out_file)
+        # mmcv.imwrite(img, out_file)
+        mmcv.imwrite(white_img, out_file)
 
     plt.close()
 
-    return img
+    return white_img
 
 
 def imshow_gt_det_bboxes(img,

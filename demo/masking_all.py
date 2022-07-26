@@ -45,6 +45,7 @@ def main(args):
         result = inference_detector(model, path+file)
         
         print("== Result ==")
+        print(result)
 
         # labeled masking
         name = file.split('.')
