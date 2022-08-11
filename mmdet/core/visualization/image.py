@@ -1,4 +1,5 @@
 # Copyright (c) OpenMMLab. All rights reserved.
+from email.mime import image
 import cv2
 import matplotlib.pyplot as plt
 import mmcv
@@ -197,12 +198,12 @@ def draw_masks(ax, img, masks, color=None, with_edge=True, labels=None, alpha=1)
         if labels is not None:
             dyn_objs = [0, 1, 2, 3, 5]
             if labels[i] in dyn_objs:
-                print(labels[i])
-                img[mask] = img[mask] * (1 - alpha) + color_mask * alpha
+                # print(labels[i])
+                img[mask] = color_mask * alpha
             else:
-                img[mask] = img[mask]
+                img[mask] = color_mask * (1 - alpha)
         else:
-            img[mask] = img[mask] * (1 - alpha) + color_mask * alpha
+            img[mask] = color_mask * (1 - alpha)
 
     p = PatchCollection(
         polygons, facecolor='none', edgecolors='w', linewidths=1, alpha=0.8)
@@ -327,16 +328,19 @@ def imshow_det_bboxes(img,
             scales=scales,
             horizontal_alignment=horizontal_alignment)
     
+    white_img = img
+
     if segms is not None:
         # mask_palette = get_palette(mask_color, max_label + 1)
         # colors = [mask_palette[label] for label in labels]
-        print(labels)
+        print("Labels: ", labels)
         # print(segms)
-        colors = [ (255,255,255) for label in labels]
+        # colors = [ (255,255,255) for label in labels]
+        colors = [ mask_color for label in labels ]
         colors = np.array(colors, dtype=np.uint8)
         # draw_masks(ax, img, segms, colors, with_edge=False)
-        white_img = img
-        # white_img = np.zeros(img.shape)
+        
+        white_img = np.full(img.shape, (255,255,255), dtype=np.uint8)
         draw_masks(ax, white_img, segms, colors, with_edge=False, labels=labels)
 
         if num_bboxes < segms.shape[0]:
@@ -364,6 +368,10 @@ def imshow_det_bboxes(img,
 
     plt.imshow(white_img)
 
+    print(height, width)
+
+    if height == 3480 and width == 4640: return img
+    
     stream, _ = canvas.print_to_buffer()
     buffer = np.frombuffer(stream, dtype='uint8')
     img_rgba = buffer.reshape(height, width, 4)

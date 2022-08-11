@@ -323,6 +323,18 @@ class BaseDetector(BaseModule, metaclass=ABCMeta):
             for i, bbox in enumerate(bbox_result)
         ]
         labels = np.concatenate(labels)
+
+        # save_flag = False
+        # dyn_obj = [0, 1, 2, 3, 5]
+        # for o in dyn_obj:
+        #     if o in labels:
+        #         print("Save Image")
+        #         save_flag = True
+        #         break
+        
+        # if save_flag is False:
+        #     return img
+
         # draw segmentation masks
         segms = None
         if segm_result is not None and len(labels) > 0:  # non empty

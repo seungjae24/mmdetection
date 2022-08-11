@@ -1,3 +1,4 @@
+
 # Copyright (c) OpenMMLab. All rights reserved.
 import asyncio
 from argparse import ArgumentParser
@@ -37,12 +38,12 @@ def main(args):
     
     # path = '/home/seungjae/lfin/example/detection/raw/'
     path = '/media/hard/LfinDataset_raw/images/'
-    file_list = sorted(os.listdir(path))
+    file_list = sorted(os.listdir(path), reverse=True)
 
     for files in file_list:
         for file in sorted(os.listdir(path + files)):
             
-            if int(files) > 39603 and int(files) < 51120 and not "mp4" in file:
+            if int(files) > 45000 and int(files) < 51121 and not "mp4" in file:
 
                 print("0. File:", file)
 
