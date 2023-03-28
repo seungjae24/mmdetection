@@ -42,7 +42,7 @@ def main(args):
     for files in file_list:
         for file in sorted(os.listdir(path + files)):
             
-            if int(files) > 39603 and int(files) < 51120 and not "mp4" in file:
+            if int(files) == 37990 and not "mp4" in file:
 
                 print("0. File:", file)
 
@@ -80,7 +80,7 @@ def main(args):
                 # if save_flag:
                     # white masking
                 filename = file.split('.')[0]
-                mask_img_file = '/home/sj98lee/masked_images/' + files + "/" + filename + '_masked.jpg'
+                mask_img_file = '/home/sj98lee/example/masked_images/' + files + "/" + filename + '_masked.jpg'
                 print(mask_img_file)
                 model.show_result(abs_file, result, font_size=0, thickness=0, mask_color=(0,0,0), out_file=mask_img_file)
 

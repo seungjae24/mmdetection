@@ -1,5 +1,6 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from email.mime import image
+from tkinter import W
 import cv2
 import matplotlib.pyplot as plt
 import mmcv
@@ -196,14 +197,10 @@ def draw_masks(ax, img, masks, color=None, with_edge=True, labels=None, alpha=1)
         
         mask = mask.astype(bool)    
         if labels is not None:
-            dyn_objs = [0, 1, 2, 3, 5]
+            dyn_objs = [0, 1, 2, 3]
             if labels[i] in dyn_objs:
-                # print(labels[i])
+                print(labels[i])
                 img[mask] = color_mask * alpha
-            else:
-                img[mask] = color_mask * (1 - alpha)
-        else:
-            img[mask] = color_mask * (1 - alpha)
 
     p = PatchCollection(
         polygons, facecolor='none', edgecolors='w', linewidths=1, alpha=0.8)
@@ -310,23 +307,23 @@ def imshow_det_bboxes(img,
         num_bboxes = bboxes.shape[0]
         bbox_palette = palette_val(get_palette(bbox_color, max_label + 1))
         colors = [bbox_palette[label] for label in labels[:num_bboxes]]
-        draw_bboxes(ax, bboxes, colors, alpha=0.8, thickness=thickness)
+        # draw_bboxes(ax, bboxes, colors, alpha=0.8, thickness=thickness)
 
         horizontal_alignment = 'left'
         positions = bboxes[:, :2].astype(np.int32) + thickness
         areas = (bboxes[:, 3] - bboxes[:, 1]) * (bboxes[:, 2] - bboxes[:, 0])
         scales = _get_adaptive_scales(areas)
         scores = bboxes[:, 4] if bboxes.shape[1] == 5 else None
-        draw_labels(
-            ax,
-            labels[:num_bboxes],
-            positions,
-            scores=scores,
-            class_names=class_names,
-            color=text_colors,
-            font_size=font_size,
-            scales=scales,
-            horizontal_alignment=horizontal_alignment)
+        # draw_labels(
+        #     ax,
+        #     labels[:num_bboxes],
+        #     positions,
+        #     scores=scores,
+        #     class_names=class_names,
+        #     color=text_colors,
+        #     font_size=font_size,
+        #     scales=scales,
+        #     horizontal_alignment=horizontal_alignment)
     
     white_img = img
 
@@ -342,7 +339,7 @@ def imshow_det_bboxes(img,
         
         white_img = np.full(img.shape, (255,255,255), dtype=np.uint8)
         draw_masks(ax, white_img, segms, colors, with_edge=False, labels=labels)
-
+        
         if num_bboxes < segms.shape[0]:
             segms = segms[num_bboxes:]
             horizontal_alignment = 'center'
@@ -356,15 +353,15 @@ def imshow_det_bboxes(img,
                 areas.append(stats[largest_id, -1])
             areas = np.stack(areas, axis=0)
             scales = _get_adaptive_scales(areas)
-            draw_labels(
-                ax,
-                labels[num_bboxes:],
-                positions,
-                class_names=class_names,
-                color=text_colors,
-                font_size=font_size,
-                scales=scales,
-                horizontal_alignment=horizontal_alignment)
+            # draw_labels(
+            #     ax,
+            #     labels[num_bboxes:],
+            #     positions,
+            #     class_names=class_names,
+            #     color=text_colors,
+            #     font_size=font_size,
+            #     scales=scales,
+            #     horizontal_alignment=horizontal_alignment)
 
     plt.imshow(white_img)
 
